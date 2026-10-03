@@ -13,9 +13,9 @@ const { requireAuth } = require("./middleware/auth");
 const User = require("./models/User");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3002;
 const MONGODB_URI =
-  process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/economicvision";
+  process.env.MONGODB_URI || "";
 
 app.use(cors({ origin: true, credentials: true }));
 app.use(express.json({ limit: "15mb" }));
