@@ -1,5 +1,29 @@
 const mongoose = require("mongoose");
 
+const BLOCK_TYPES = [
+  "heading",
+  "paragraph",
+  "image",
+  "quote",
+  "list",
+  "divider",
+  "callout",
+  "stats",
+  "table",
+  "gallery",
+  "code",
+  "button",
+];
+
+const blockSchema = new mongoose.Schema(
+  {
+    id: { type: String, required: true },
+    type: { type: String, required: true, enum: BLOCK_TYPES },
+    data: { type: mongoose.Schema.Types.Mixed, default: {} },
+  },
+  { _id: false }
+);
+
 const articleSchema = new mongoose.Schema(
   {
     title: {
@@ -7,38 +31,31 @@ const articleSchema = new mongoose.Schema(
       required: [true, "Title is required"],
       trim: true,
     },
-    paragraph: {
+    slug: {
       type: String,
-      required: [true, "Paragraph is required"],
+      required: true,
+      unique: true,
       trim: true,
     },
-    subHeading: {
+    kicker: { type: String, default: "", trim: true },
+    excerpt: { type: String, default: "", trim: true },
+    category: { type: String, default: "Economy", trim: true },
+    tags: { type: [String], default: [] },
+    coverImage: { type: String, default: "", trim: true },
+    featured: { type: Boolean, default: false },
+    author: { type: String, default: "Editorial Desk", trim: true },
+    status: {
       type: String,
-      required: [true, "Sub heading is required"],
-      trim: true,
+      enum: ["draft", "published", "review"],
+      default: "draft",
     },
-    authorName: {
-      type: String,
-      required: [true, "Author name is required"],
-      trim: true,
-    },
-    authorImage: {
-      type: String,
-      required: [true, "Author image is required"],
-      trim: true,
-    },
-    articleImage: {
-      type: String,
-      required: [true, "Article image is required"],
-      trim: true,
-    },
-    articleCategory: {
-      type: String,
-      required: [true, "Article category is required"],
-      trim: true,
-    },
+    publishedAt: { type: Date, default: null },
+    views: { type: Number, default: 0 },
+    blocks: { type: [blockSchema], default: [] },
   },
   { timestamps: true }
 );
+
+articleSchema.index({ status: 1, publishedAt: -1 });
 
 module.exports = mongoose.model("Article", articleSchema);
