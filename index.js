@@ -18,8 +18,8 @@ const MONGODB_URI =
   process.env.MONGODB_URI || "";
 
 app.use(cors({ origin: true, credentials: true }));
-app.use(express.json({ limit: "15mb" }));
-app.use(express.urlencoded({ extended: true, limit: "15mb" }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api/auth", authRoutes);

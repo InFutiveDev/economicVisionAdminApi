@@ -2,5 +2,7 @@ node_modules/
 .env
 .DS_Store
 npm-debug.log*
+firebase-service-account.json
+helper/firebase-service-account.json
 public/uploads/*
 !public/uploads/.gitkeep

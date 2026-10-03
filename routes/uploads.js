@@ -1,28 +1,12 @@
-const fs = require("fs");
-const path = require("path");
 const express = require("express");
 const multer = require("multer");
+const { ALLOWED_TYPES, uploadImage } = require("../helper/firebase");
 
 const router = express.Router();
-const uploadsDir = path.join(__dirname, "../public/uploads");
-const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
-const ALLOWED_TYPES = {
-  "image/jpeg": ".jpg",
-  "image/png": ".png",
-  "image/gif": ".gif",
-  "image/webp": ".webp",
-};
-
-fs.mkdirSync(uploadsDir, { recursive: true });
+const MAX_IMAGE_BYTES = 50 * 1024 * 1024;
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: uploadsDir,
-    filename(req, file, callback) {
-      const extension = ALLOWED_TYPES[file.mimetype] || path.extname(file.originalname);
-      callback(null, `${Date.now()}-${Math.round(Math.random() * 1e6)}${extension}`);
-    },
-  }),
+  storage: multer.memoryStorage(),
   limits: { fileSize: MAX_IMAGE_BYTES },
   fileFilter(req, file, callback) {
     if (!ALLOWED_TYPES[file.mimetype]) {
@@ -34,12 +18,12 @@ const upload = multer({
 });
 
 router.post("/", (req, res) => {
-  upload.single("file")(req, res, (error) => {
+  upload.single("file")(req, res, async (error) => {
     if (error) {
       return res.status(400).json({
         message:
           error.code === "LIMIT_FILE_SIZE"
-            ? "Image must be 5MB or smaller."
+            ? "Image must be 50MB or smaller."
             : error.message || "Could not upload image.",
       });
     }
@@ -48,9 +32,14 @@ router.post("/", (req, res) => {
       return res.status(400).json({ message: "Choose an image file." });
     }
 
-    res.status(201).json({
-      url: `${req.protocol}://${req.get("host")}/uploads/${req.file.filename}`,
-    });
+    try {
+      const uploaded = await uploadImage(req.file);
+      res.status(201).json(uploaded);
+    } catch (uploadError) {
+      res.status(400).json({
+        message: uploadError.message || "Could not upload image.",
+      });
+    }
   });
 });
 

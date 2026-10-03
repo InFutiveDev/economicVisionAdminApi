@@ -46,6 +46,7 @@ function serializeArticle(doc) {
       : null,
     updatedAt: article.updatedAt.toISOString(),
     views: article.views || 0,
+    blocks: article.blocks || [],
   };
 }
 
