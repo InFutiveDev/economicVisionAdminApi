@@ -10,6 +10,8 @@ const mediaSchema = new mongoose.Schema(
     image: { type: String, default: "", trim: true },
     url: { type: String, default: "", trim: true },
     duration: { type: String, default: "", trim: true },
+    category: { type: String, default: "", trim: true },
+    subCategory: { type: String, default: "", trim: true },
     order: { type: Number, default: 0 },
     published: { type: Boolean, default: true },
   },

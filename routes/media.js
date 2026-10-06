@@ -14,6 +14,8 @@ function serializeMedia(doc) {
     image: doc.image || "",
     url: doc.url || "",
     duration: doc.duration || "",
+    category: doc.category || "",
+    subCategory: doc.subCategory || "",
     order: doc.order || 0,
     published: doc.published !== false,
   };
@@ -26,6 +28,8 @@ function readMedia(body) {
     image: String(body.image || "").trim(),
     url: String(body.url || "").trim(),
     duration: String(body.duration || "").trim(),
+    category: String(body.category || "").trim(),
+    subCategory: body.category ? String(body.subCategory || "").trim() : "",
     published: body.published !== false,
   };
 }

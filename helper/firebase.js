@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 const { initializeApp, getApps, cert } = require("firebase-admin/app");
 const { getStorage } = require("firebase-admin/storage");
@@ -9,18 +10,38 @@ const ALLOWED_TYPES = {
   "image/webp": ".webp",
 };
 
-function getServiceAccount() {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT) {
-    return require(path.resolve(process.env.FIREBASE_SERVICE_ACCOUNT));
+class UploadConfigError extends Error {}
+
+// FIREBASE_SERVICE_ACCOUNT may be a path to the key file or the key JSON itself.
+function serviceAccountFromSetting(setting) {
+  const value = setting.trim();
+  if (value.startsWith("{")) {
+    try {
+      return JSON.parse(value);
+    } catch {
+      throw new UploadConfigError("FIREBASE_SERVICE_ACCOUNT contains invalid JSON.");
+    }
   }
+
+  const file = path.resolve(value);
+  if (!fs.existsSync(file)) return null;
+  return JSON.parse(fs.readFileSync(file, "utf8"));
+}
+
+function getServiceAccount() {
+  const setting = process.env.FIREBASE_SERVICE_ACCOUNT;
+  const fromSetting = setting ? serviceAccountFromSetting(setting) : null;
+  if (fromSetting) return fromSetting;
 
   const projectId = process.env.FIREBASE_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
   const privateKey = process.env.FIREBASE_PRIVATE_KEY;
 
   if (!projectId || !clientEmail || !privateKey) {
-    throw new Error(
-      "Firebase is not configured. Set FIREBASE_SERVICE_ACCOUNT or FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY."
+    throw new UploadConfigError(
+      setting
+        ? `Firebase key file not found at ${path.resolve(setting)}. Copy firebase-service-account.json to the server, or set FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY.`
+        : "Firebase is not configured. Set FIREBASE_SERVICE_ACCOUNT or FIREBASE_PROJECT_ID, FIREBASE_CLIENT_EMAIL, and FIREBASE_PRIVATE_KEY."
     );
   }
 
@@ -94,6 +115,7 @@ async function uploadImage(file, folder) {
 
 module.exports = {
   ALLOWED_TYPES,
+  UploadConfigError,
   getFirebaseApp,
   uploadImage,
 };
