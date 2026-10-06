@@ -7,9 +7,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const articleRoutes = require("./routes/articles");
 const authRoutes = require("./routes/auth");
+const healthRoutes = require("./routes/health");
 const pageRoutes = require("./routes/pages");
 const uploadRoutes = require("./routes/uploads");
-const { requireAuth } = require("./middleware/auth");
+const userRoutes = require("./routes/users");
+const { requireAuth, requireAdmin } = require("./middleware/auth");
 const User = require("./models/User");
 
 const app = express();
@@ -26,22 +28,8 @@ app.use("/api/auth", authRoutes);
 app.use("/api/articles", requireAuth, articleRoutes);
 app.use("/api/pages", requireAuth, pageRoutes);
 app.use("/api/uploads", requireAuth, uploadRoutes);
-
-app.get("/api/health", (req, res) => {
-  const mongoState = mongoose.connection.readyState;
-  const states = {
-    0: "disconnected",
-    1: "connected",
-    2: "connecting",
-    3: "disconnecting",
-  };
-
-  res.json({
-    status: "ok",
-    service: "Economic Vision Admin API",
-    mongodb: states[mongoState] || "unknown",
-  });
-});
+app.use("/api/users", requireAuth, requireAdmin, userRoutes);
+app.use("/api/health", healthRoutes);
 
 async function seedAdmin() {
   const email = (process.env.ADMIN_EMAIL || "admin@economicvision.com")

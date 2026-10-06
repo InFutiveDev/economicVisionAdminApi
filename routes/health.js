@@ -1,8 +1,8 @@
 const express = require("express");
-const { login } = require("../controllers/authController");
+const { getHealth } = require("../controllers/healthController");
 
 const router = express.Router();
 
-router.post("/login", login);
+router.get("/", getHealth);
 
 module.exports = router;
