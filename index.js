@@ -11,6 +11,9 @@ const healthRoutes = require("./routes/health");
 const pageRoutes = require("./routes/pages");
 const uploadRoutes = require("./routes/uploads");
 const userRoutes = require("./routes/users");
+const categoryRoutes = require("./routes/categories");
+const homepageRoutes = require("./routes/homepage");
+const mediaRoutes = require("./routes/media");
 const { requireAuth, requireAdmin } = require("./middleware/auth");
 const User = require("./models/User");
 
@@ -29,6 +32,9 @@ app.use("/api/articles", requireAuth, articleRoutes);
 app.use("/api/pages", requireAuth, pageRoutes);
 app.use("/api/uploads", requireAuth, uploadRoutes);
 app.use("/api/users", requireAuth, requireAdmin, userRoutes);
+app.use("/api/categories", requireAuth, categoryRoutes);
+app.use("/api/homepage", requireAuth, homepageRoutes);
+app.use("/api/media", requireAuth, mediaRoutes);
 app.use("/api/health", healthRoutes);
 
 async function seedAdmin() {
