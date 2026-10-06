@@ -15,6 +15,7 @@ function readPayload(body) {
     kicker: String(body.kicker || "").trim(),
     excerpt: String(body.excerpt || "").trim(),
     category: String(body.category || "Economy").trim() || "Economy",
+    subCategory: String(body.subCategory || "").trim(),
     tags,
     coverImage: String(body.coverImage || "").trim(),
     featured: Boolean(body.featured),

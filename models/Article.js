@@ -40,6 +40,7 @@ const articleSchema = new mongoose.Schema(
     kicker: { type: String, default: "", trim: true },
     excerpt: { type: String, default: "", trim: true },
     category: { type: String, default: "Economy", trim: true },
+    subCategory: { type: String, default: "", trim: true },
     tags: { type: [String], default: [] },
     coverImage: { type: String, default: "", trim: true },
     featured: { type: Boolean, default: false },

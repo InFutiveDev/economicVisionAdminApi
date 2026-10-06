@@ -19,6 +19,7 @@ function readPayload(body) {
     kicker: String(body.kicker || body.subHeading || "").trim(),
     excerpt,
     category: String(body.category || body.articleCategory || "Economy").trim() || "Economy",
+    subCategory: String(body.subCategory || "").trim(),
     tags: Array.isArray(body.tags)
       ? body.tags.map((tag) => String(tag).trim()).filter(Boolean)
       : [],
