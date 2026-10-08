@@ -4,6 +4,8 @@ const HOME_SECTION_KEYS = [
   "hero",
   "top-stories",
   "latest-news",
+  "editors-pick",
+  "trending",
   "exclusive",
   "why-it-matters",
   "opinion",
